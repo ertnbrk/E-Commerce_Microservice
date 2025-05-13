@@ -13,7 +13,7 @@ namespace UserService.Controllers
         {
             this._context = userDbContext;
         }
-        [HttpGet]
+        [HttpGet("all")]
         public ActionResult<IEnumerable<Users>> GetUsers()
         {
             return _context.Users;
@@ -25,7 +25,7 @@ namespace UserService.Controllers
             return User;
         }
         [HttpPost]
-        public async Task<ActionResult> Create(Users users)
+        public async Task<ActionResult> Create([FromBody] Users users)
         {
             await _context.Users.AddAsync(users);
             await _context.SaveChangesAsync();

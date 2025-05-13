@@ -18,14 +18,17 @@ namespace OrderService.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<IActionResult> GetAll()
         {
+            Console.WriteLine("GetAll endpoint called!");
+
             var orders = await _context.Orders.ToListAsync();
+
             return Ok(orders);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var order = await _context.Orders.FindAsync(id);
@@ -59,7 +62,7 @@ namespace OrderService.Controllers
             return CreatedAtAction(nameof(GetById), new { id = order.Id }, order);
         }
 
-        [HttpPatch("{id}/status")]
+        [HttpPatch("{id:guid}/status")]
         public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] OrderStatusUpdateDto dto)
         {
             var order = await _context.Orders.FindAsync(id);
@@ -76,7 +79,7 @@ namespace OrderService.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var order = await _context.Orders.FindAsync(id);

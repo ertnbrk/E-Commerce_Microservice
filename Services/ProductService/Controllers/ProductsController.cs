@@ -8,17 +8,17 @@ namespace ProductService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductControllers : ControllerBase
+    public class ProductsController : ControllerBase
     {
         private readonly ProductDbContext _context;
 
-        public ProductControllers(ProductDbContext context)
+        public ProductsController(ProductDbContext context)
         {
             _context = context;
         }
 
         // GET: api/products
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<Product>>> GetAll()
         {
             return await _context.Products
@@ -27,7 +27,7 @@ namespace ProductService.Controllers
         }
 
         // GET: api/products/{id}
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<Product>> GetById(Guid id)
         {
             var product = await _context.Products.FindAsync(id);
@@ -38,7 +38,7 @@ namespace ProductService.Controllers
 
         // POST: api/products
         [HttpPost]
-        public async Task<ActionResult<Product>> Create(Product product)
+        public async Task<ActionResult<Product>> Create([FromBody] Product product)
         {
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
@@ -46,7 +46,7 @@ namespace ProductService.Controllers
         }
 
         // PUT: api/products/{id}
-        [HttpPut("{id}")]
+        [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, Product updatedProduct)
         {
             if (id != updatedProduct.ProductId)
@@ -69,7 +69,7 @@ namespace ProductService.Controllers
         }
 
         // PATCH: api/products/{id}/status
-        [HttpPatch("{id}/status")]
+        [HttpPatch("{id:guid}/status")]
         public async Task<IActionResult> UpdateStatus(Guid id, UpdateProductStatusDto dto)
         {
             var product = await _context.Products.FindAsync(id);
@@ -86,7 +86,7 @@ namespace ProductService.Controllers
         }
 
         // DELETE: api/products/{id}
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var product = await _context.Products.FindAsync(id);
