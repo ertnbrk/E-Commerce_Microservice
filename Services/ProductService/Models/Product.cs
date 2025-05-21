@@ -20,4 +20,5 @@ namespace ProductService.Models
         public bool? IsActive { get; set; }
         public decimal? UnitPrice { get; set; }
     }
+
 }
