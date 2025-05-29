@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using UserService;
+using UserService.Infrastructure.Persistence;
 
 #nullable disable
 
@@ -22,7 +22,21 @@ namespace UserService.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("UserService.Models.Users", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.Credentials", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("HashedPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Credentials", "auth");
+                });
+
+            modelBuilder.Entity("UserService.Domain.Entities.Users", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
@@ -38,6 +52,10 @@ namespace UserService.Migrations
                         .HasColumnType("date")
                         .HasColumnName("BirthDate");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedAt");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -47,11 +65,6 @@ namespace UserService.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("FirstName");
-
-                    b.Property<string>("HashedPassword")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HashedPassword");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit")
@@ -76,9 +89,33 @@ namespace UserService.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("PhoneVerified");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("VerifiedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("VerifiedAt");
+
                     b.HasKey("UserId");
 
                     b.ToTable("Users", "dbo");
+                });
+
+            modelBuilder.Entity("UserService.Domain.Entities.Credentials", b =>
+                {
+                    b.HasOne("UserService.Domain.Entities.Users", "User")
+                        .WithOne("Credentials")
+                        .HasForeignKey("UserService.Domain.Entities.Credentials", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UserService.Domain.Entities.Users", b =>
+                {
+                    b.Navigation("Credentials");
                 });
 #pragma warning restore 612, 618
         }
