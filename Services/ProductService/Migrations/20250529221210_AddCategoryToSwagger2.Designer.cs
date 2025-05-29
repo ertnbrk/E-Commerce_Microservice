@@ -12,8 +12,8 @@ using ProductService.Infrastructure.Persistence;
 namespace ProductService.Migrations
 {
     [DbContext(typeof(ProductDbContext))]
-    [Migration("20250512194209_InitProdcutContext")]
-    partial class InitProdcutContext
+    [Migration("20250529221210_AddCategoryToSwagger2")]
+    partial class AddCategoryToSwagger2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace ProductService.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ProductService.Models.Product", b =>
+            modelBuilder.Entity("ProductService.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("ProductId")
                         .ValueGeneratedOnAdd()
@@ -33,9 +33,7 @@ namespace ProductService.Migrations
                         .HasColumnName("ProductId");
 
                     b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("Category");
 
                     b.Property<DateTime>("CreatedAt")

@@ -9,12 +9,20 @@ services:
       - "1433:1433"
     networks:
       - ecommerce-network
-
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # AMQP
+      - "15672:15672"   # RabbitMQ Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
   userservice:
     container_name: userservice
-
     build:
-      context: ./Services/UserService
+      context: .                             
+      dockerfile: ./Services/UserService/Dockerfile
     ports:
       - "5001:80"
     environment:
@@ -24,11 +32,12 @@ services:
     networks:
       - ecommerce-network
 
+
   productservice:
     container_name: productservice
     build:
-      context: ./Services/ProductService
-      dockerfile: Dockerfile
+      context: .                                
+      dockerfile: ./Services/ProductService/Dockerfile
     ports:
       - "5002:80"
     environment:
@@ -42,7 +51,7 @@ services:
     container_name: orderservice
     build:
       context: .
-      dockerfile: Services/OrderService/Dockerfile
+      dockerfile: /Services/OrderService/Dockerfile
     ports:
       - "5003:80"
     environment:

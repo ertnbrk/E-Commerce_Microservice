@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OrderService.Migrations
 {
     /// <inheritdoc />
-    public partial class BeforeMig : Migration
+    public partial class InitOrders : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,6 +36,21 @@ namespace OrderService.Migrations
                 {
                     table.PrimaryKey("PK_Orders", x => x.OrderId);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "OutboxMessages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ProcessedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OutboxMessages", x => x.Id);
+                });
         }
 
         /// <inheritdoc />
@@ -44,6 +59,9 @@ namespace OrderService.Migrations
             migrationBuilder.DropTable(
                 name: "Orders",
                 schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "OutboxMessages");
         }
     }
 }

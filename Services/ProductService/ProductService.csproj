@@ -25,4 +25,10 @@
     <Folder Include="Domain\Interfaces\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\SharedKernel\SharedKernel.csproj" />
+    <ProjectReference Include="..\..\Shared.Logging\Shared.Logging.csproj" />
+    <ProjectReference Include="..\..\Shared.Messaging\Shared.Messaging.csproj" />
+  </ItemGroup>
+
 </Project>

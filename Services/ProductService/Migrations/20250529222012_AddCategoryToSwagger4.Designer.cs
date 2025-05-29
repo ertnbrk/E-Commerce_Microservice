@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductService.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using ProductService.Infrastructure.Persistence;
 namespace ProductService.Migrations
 {
     [DbContext(typeof(ProductDbContext))]
-    partial class ProductDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250529222012_AddCategoryToSwagger4")]
+    partial class AddCategoryToSwagger4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,8 +32,8 @@ namespace ProductService.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ProductId");
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int")
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("Category");
 
                     b.Property<DateTime>("CreatedAt")

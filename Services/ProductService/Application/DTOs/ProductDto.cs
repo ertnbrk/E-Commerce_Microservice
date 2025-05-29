@@ -9,7 +9,7 @@ namespace ProductService.Application.DTOs
         public string? Description { get; set; }
         public decimal UnitPrice { get; set; }
         public int Stock { get; set; }
-        public ProductCategories Category { get; set; }
+        public ProductCategory Category { get; set; }
         public bool IsActive { get; set; }
     }
 }

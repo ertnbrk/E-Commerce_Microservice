@@ -5,22 +5,27 @@ EXPOSE 80
 
 # 2. Build image: proje derlenir
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Yalnızca .csproj dosyasını kopyala ve restore yap
-COPY Services/OrderService/OrderService.csproj Services/OrderService/
-RUN dotnet restore Services/OrderService/OrderService.csproj
+# Gerekli .csproj dosyalarını kopyala
+COPY ["Services/OrderService/OrderService.csproj", "Services/OrderService/"]
+COPY ["SharedKernel/SharedKernel.csproj", "SharedKernel/"]
+COPY ["Shared.Logging/Shared.Logging.csproj", "Shared.Logging/"]
+COPY ["Shared.Messaging/Shared.Messaging.csproj", "Shared.Messaging/"]
 
-# Geri kalan tüm dosyaları kopyala
+# Tüm kaynak dosyaları kopyala
 COPY . .
 
-# OrderService dizinine geç ve build yap
+# Build işlemi
 WORKDIR /src/Services/OrderService
-RUN dotnet build OrderService.csproj -c Release -o /app/build
+RUN dotnet restore
+RUN dotnet build -c $BUILD_CONFIGURATION -o /app/build
 
 # 3. Publish stage
 FROM build AS publish
-RUN dotnet publish OrderService.csproj -c Release -o /app/publish /p:UseAppHost=false
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # 4. Final image
 FROM base AS final

@@ -12,8 +12,8 @@ using ProductService.Infrastructure.Persistence;
 namespace ProductService.Migrations
 {
     [DbContext(typeof(ProductDbContext))]
-    [Migration("20250527233706_Initialize")]
-    partial class Initialize
+    [Migration("20250529215304_AddCategoryToProduct")]
+    partial class AddCategoryToProduct
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,6 +31,10 @@ namespace ProductService.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ProductId");
+
+                    b.Property<int?>("Category")
+                        .HasColumnType("int")
+                        .HasColumnName("Category");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2")

@@ -1,6 +1,9 @@
 ﻿using OrderService.Application.DTOs;
 using OrderService.Application.Interfaces;
 using OrderService.Domain.Entities;
+using OrderService.Infrastructure.Repositories;
+using Shared.Messaging.Events;
+using System.Text.Json;
 using static OrderService.Domain.Enums.OrdersStatus;
 
 namespace OrderService.Application.UseCases
@@ -10,15 +13,19 @@ namespace OrderService.Application.UseCases
         private readonly IOrderRepository _orderRepository;
         private readonly IProductService _productService;
         private readonly IUserService _userService;
+        private readonly IOutboxRepository _outboxRepository;
 
         public CreateOrderUseCase(
             IOrderRepository orderRepository,
             IProductService productService,
-            IUserService userService)
+            IUserService userService,
+            IOutboxRepository outboxRepository
+            )
         {
             _orderRepository = orderRepository;
             _productService = productService;
-            _userService = userService;
+            _userService = userService;            _outboxRepository = outboxRepository;
+
         }
 
         public async Task<Order> ExecuteAsync(OrderCreateDto dto, Guid userId)
@@ -52,7 +59,25 @@ namespace OrderService.Application.UseCases
             
             await _orderRepository.AddOrderAsync(order);
 
+
+            var outboxMessage = new OutboxMessage
+            {
+                Type = nameof(OrderCreatedEvent),
+                Content = JsonSerializer.Serialize(new OrderCreatedEvent
+                {
+                    OrderId = order.Id,
+                    ProductId = order.ProductId,
+                    Quantity = order.Quantity,
+                    CreatedAt = order.CreatedAt
+                })
+            };
+
+            await _outboxRepository.AddAsync(outboxMessage);
+
+
             return order;
         }
+
+
     }
 }

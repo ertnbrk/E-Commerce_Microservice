@@ -27,7 +27,12 @@
 
   <ItemGroup>
     <Folder Include="Domain\Interfaces\" />
-    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\SharedKernel\SharedKernel.csproj" />
+    <ProjectReference Include="..\..\Shared.Logging\Shared.Logging.csproj" />
+    <ProjectReference Include="..\..\Shared.Messaging\Shared.Messaging.csproj" />
   </ItemGroup>
 
 </Project>

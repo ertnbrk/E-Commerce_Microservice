@@ -7,7 +7,7 @@ using static OrderService.Domain.Enums.OrdersStatus;
 
 namespace OrderService.API.Controllers
 {
-    [Authorize]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class OrdersController : ControllerBase
@@ -61,11 +61,11 @@ namespace OrderService.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] OrderCreateDto dto)
         {
-            var userIdClaim = User.FindFirst("sub")?.Value;
+          /*  var userIdClaim = User.FindFirst("sub")?.Value;
             if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
                 return Unauthorized();
-
-            var orderId = await _createOrderUseCase.ExecuteAsync(dto, userId);
+          */
+            var orderId = await _createOrderUseCase.ExecuteAsync(dto, dto.UserId);
             return CreatedAtAction(nameof(GetById), new { id = orderId }, null);
         }
 

@@ -12,8 +12,8 @@ using OrderService.Infrastructure.Persistence;
 namespace OrderService.Migrations
 {
     [DbContext(typeof(OrderDbContext))]
-    [Migration("20250528211355_BeforeMig")]
-    partial class BeforeMig
+    [Migration("20250529190424_InitOrders")]
+    partial class InitOrders
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,6 +81,31 @@ namespace OrderService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Orders", "dbo");
+                });
+
+            modelBuilder.Entity("OrderService.Domain.Entities.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages");
                 });
 #pragma warning restore 612, 618
         }

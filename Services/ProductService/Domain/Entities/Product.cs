@@ -12,7 +12,7 @@ namespace ProductService.Domain.Entities
         public decimal UnitPrice { get; set; }
         public int Stock { get; set; }
 
-        public ProductCategories Category { get; set; }
+        public ProductCategory Category { get; set; } = ProductCategory.Default;
 
         public string DisplayInfo => $"{Name} ({Category}) - {UnitPrice:C}";
     }

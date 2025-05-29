@@ -2,7 +2,6 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using OrderService.API.Middleware;
 using OrderService.Application.Interfaces;
 using OrderService.Application.UseCases;
 using OrderService.Application.Validators;
@@ -10,6 +9,12 @@ using OrderService.Infrastructure.Persistence;
 using OrderService.Infrastructure.Repositories;
 using OrderService.Infrastructure.Services;
 using System.Text;
+using SharedKernel.Extensions;
+using Serilog;
+using Shared.Logging.Logging;
+using Shared.Messaging.Publisher;
+using Shared.Messaging.Infrastructure;
+using Shared.Messaging;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -66,12 +71,17 @@ builder.Services.AddScoped<IDeleteOrderUseCase, DeleteOrderUseCase>();
 builder.Services.AddScoped<IGetOrdersByUserIdUseCase, GetOrdersByUserIdUseCase>();
 builder.Services.AddScoped<IGetOrdersByProductIdUseCase, GetOrdersByProductIdUseCase>();
 
+builder.Services.Configure<RabbitMqSettings>(
+    builder.Configuration.GetSection("RabbitMqSettings"));
+builder.Services.AddScoped<IEventPublisher, RabbitMqPublisher>();
 
+builder.Services.AddScoped<IOutboxRepository, OutboxRepository>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateOrderDtoValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
-
+SerilogConfigurator.Configure("orderservice");
+builder.Host.UseSerilog();
 
 
 builder.Services.AddHttpClient();

@@ -7,10 +7,15 @@ using UserService.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using UserService.API.Middleware;
+using SharedKernel.Extensions;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using UserService.Application.Validators;
+using Serilog;
+using Shared.Logging.Logging;
+using Shared.Messaging.Publisher;
+using Shared.Messaging.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,7 +30,15 @@ builder.Services.AddSwaggerGen();
 //dependecy injection for db
 builder.Services.AddHttpClient();
 
+
+SerilogConfigurator.Configure("userservice");
+builder.Host.UseSerilog();
+
+
+
 //Services
+builder.Services.AddScoped<IEventPublisher, RabbitMqPublisher>();
+
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -60,6 +73,17 @@ builder.Services.AddScoped<IUpdateUserStatusUseCase, UpdateUserStatusUseCase>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserDtoValidator>();
 builder.Services.AddFluentValidationAutoValidation();
+
+
+
+
+
+
+
+
+
+
+
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 

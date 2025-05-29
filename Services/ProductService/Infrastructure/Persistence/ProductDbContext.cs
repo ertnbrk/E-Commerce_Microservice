@@ -71,8 +71,9 @@ namespace ProductService.Infrastructure.Persistence
                 entity.Property(e => e.Stock)
                       .HasColumnName("Stock");
 
-                modelBuilder.Entity<Product>()
-     .Ignore(p => p.Category);
+                entity.Property(e => e.Category)
+    .HasColumnName("Category");
+
 
 
                 // BaseEntity'den gelenler

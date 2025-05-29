@@ -1,15 +1,14 @@
 ﻿namespace ProductService.Domain.Enums
 {
-    public class ProductCategories
-    {
+    
         public enum ProductCategory
         {
-            Default,
-            Electronics,
-            Clothing,
-            Food,
-            Furniture,
-            Tools
-        }
-    }
+            Default =1,
+            Electronics =2,
+            Clothing = 3,
+            Food = 4,
+            Furniture = 5,
+            Tools = 6
+       }
+    
 }

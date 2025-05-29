@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
 using ProductService.Infrastructure.Persistence;
+using Microsoft.Extensions.Configuration;
 
 namespace ProductService.Infrastructure.Factories
 {
@@ -8,11 +9,12 @@ namespace ProductService.Infrastructure.Factories
     {
         public ProductDbContext CreateDbContext(string[] args)
         {
+            var configuration = new ConfigurationBuilder()
+                            .SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile("appsettings.json")
+                            .Build();
             var optionsBuilder = new DbContextOptionsBuilder<ProductDbContext>();
-
-            // Buraya kendi veritabanı bağlantı cümleni yaz (test veya local connection string)
-            optionsBuilder.UseSqlServer("Server=localhost;Database=ProductDb;Trusted_Connection=True;TrustServerCertificate=True");
-
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             return new ProductDbContext(optionsBuilder.Options);
         }
     }

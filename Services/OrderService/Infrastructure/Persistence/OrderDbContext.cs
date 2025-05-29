@@ -14,6 +14,7 @@ namespace OrderService.Infrastructure.Persistence
         }
 
         public DbSet<Order> Orders { get; set; }
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
         public override int SaveChanges()
         {

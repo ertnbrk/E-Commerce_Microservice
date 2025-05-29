@@ -4,9 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using ProductService.Application.Interfaces;
 using ProductService.Application.UseCases;
 using ProductService.Application.Validators;
-using ProductService.Infrastructure.Middleware;
+using SharedKernel.Extensions;
 using ProductService.Infrastructure.Persistence;
 using ProductService.Infrastructure.Repositories;
+using Serilog;
+using Shared.Logging.Logging;
+using Shared.Messaging.Publisher;
+using Shared.Messaging.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,11 +38,17 @@ builder.Services.AddScoped<IGetProductByIdUseCase, GetProductByIdUseCase>();
 builder.Services.AddScoped<IUpdateProductStatusUseCase, UpdateProductStatusUseCase>();
 builder.Services.AddScoped<IDeleteProductUseCase, DeleteProductUseCase>();
 
+builder.Services.AddScoped<IEventPublisher, RabbitMqPublisher>();
 
 
 
 builder.Services.AddValidatorsFromAssemblyContaining<ProductDtoValidator>();
 builder.Services.AddFluentValidationAutoValidation();
+
+
+
+SerilogConfigurator.Configure("productservice");
+builder.Host.UseSerilog();
 
 
 var app = builder.Build();
@@ -51,7 +61,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseGlobalExceptionMiddleware();
 
 app.MapControllers();
 
