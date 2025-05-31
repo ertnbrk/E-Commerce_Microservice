@@ -36,10 +36,14 @@ namespace OrderService.Application.UseCases
                 throw new Exception("Kullanıcı bulunamadı.");
 
             //Get Product Information
-            var product = await _productService.GetProductByIdAsync(dto.ProductId);
-            if (product == null || !product.IsActive)
-                throw new Exception("Ürün bulunamadı veya aktif değil.");
-
+            Guid productIdDummy = Guid.Parse("3136e93d-1407-4f4c-965b-f8b23e92661d");
+            var product = await _productService.GetProductByIdAsync(productIdDummy);
+            
+            if (product == null || !product.IsActive) {
+                Console.WriteLine(JsonSerializer.Serialize(product));
+                throw new Exception("Ürün bulunamadı veya aktif değil. /n ProductId : "+dto.ProductId + "/n Product : /n" + JsonSerializer.Serialize(product));
+                
+            }
             //Create Order
             var order = new Order
             {

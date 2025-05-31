@@ -14,7 +14,8 @@ using Serilog;
 using Shared.Logging.Logging;
 using Shared.Messaging.Publisher;
 using Shared.Messaging.Infrastructure;
-using Shared.Messaging;
+using Shared.Messaging.Configuration;
+using OrderService.Infrastructure.BackgroundServices;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,7 +54,9 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.ListenAnyIP(80);
 });
 builder.Services.AddDbContext<OrderDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),opt => {
+        opt.CommandTimeout(60);
+    }));
 
 // Add services to the container.
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
@@ -71,11 +74,12 @@ builder.Services.AddScoped<IDeleteOrderUseCase, DeleteOrderUseCase>();
 builder.Services.AddScoped<IGetOrdersByUserIdUseCase, GetOrdersByUserIdUseCase>();
 builder.Services.AddScoped<IGetOrdersByProductIdUseCase, GetOrdersByProductIdUseCase>();
 
-builder.Services.Configure<RabbitMqSettings>(
-    builder.Configuration.GetSection("RabbitMqSettings"));
+builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMqSettings"));
+
 builder.Services.AddScoped<IEventPublisher, RabbitMqPublisher>();
 
 builder.Services.AddScoped<IOutboxRepository, OutboxRepository>();
+builder.Services.AddHostedService<OutboxPublisherService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateOrderDtoValidator>();
 builder.Services.AddFluentValidationAutoValidation();
@@ -86,7 +90,10 @@ builder.Host.UseSerilog();
 
 builder.Services.AddHttpClient();
 
-
+builder.Services.AddHttpClient<IProductService, ProductHttpService>(client =>
+{
+    client.BaseAddress = new Uri("http://productservice"); // Docker içi isimlendirme!
+});
 
 var app = builder.Build();
 

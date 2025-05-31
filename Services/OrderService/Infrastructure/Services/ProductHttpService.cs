@@ -1,5 +1,6 @@
 ﻿using OrderService.Application.DTOs;
 using OrderService.Application.Interfaces;
+using System.Text.Json;
 
 namespace OrderService.Infrastructure.Services
 {
@@ -13,12 +14,20 @@ namespace OrderService.Infrastructure.Services
         }
         public async Task<ProductDto?> GetProductByIdAsync(Guid productId)
         {
-            var response = await _httpClient.GetAsync($"http://productservice/api/products/{productId}");
+            var response = await _httpClient.GetAsync($"http://productservice/api/Products/{productId}");
+            var content = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine($" ProductService yanıt kodu: {response.StatusCode}");
+            Console.WriteLine($" Yanıt içeriği: {content}");
 
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<ProductDto>();
+            return JsonSerializer.Deserialize<ProductDto>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
         }
     }
 }

@@ -2,6 +2,7 @@
 using Shared.Messaging.Publisher;
 using System.Text;
 using Microsoft.Extensions.Options;
+using Shared.Messaging.Configuration;
 
 namespace Shared.Messaging.Infrastructure
 {
@@ -14,15 +15,22 @@ namespace Shared.Messaging.Infrastructure
         {
             _settings = options.Value;
 
-            _factory = new ConnectionFactory() { HostName = _settings.HostName };
+            _factory = new ConnectionFactory
+            {
+                HostName = _settings.HostName,
+                Port = _settings.Port,
+                UserName = _settings.UserName,
+                Password = _settings.Password
+            };
         }
 
         public Task PublishAsync(string eventType, string content)
         {
+            Console.WriteLine($"Publishing event to RabbitMQ. Queue: {eventType}, Content: {content}");
+
             using var connection = _factory.CreateConnection();
             using var channel = connection.CreateModel();
 
-            // Kuyruk tanımı (idempotent)
             channel.QueueDeclare(
                 queue: eventType,
                 durable: true,
@@ -32,14 +40,16 @@ namespace Shared.Messaging.Infrastructure
 
             var body = Encoding.UTF8.GetBytes(content);
 
-            // Yayınla
             channel.BasicPublish(
                 exchange: "",
                 routingKey: eventType,
                 basicProperties: null,
                 body: body);
 
+            Console.WriteLine($"Event published successfully to queue '{eventType}'");
+
             return Task.CompletedTask;
         }
     }
+
 }

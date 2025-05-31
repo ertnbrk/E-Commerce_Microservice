@@ -7,9 +7,9 @@ using static OrderService.Domain.Enums.OrdersStatus;
 
 namespace OrderService.API.Controllers
 {
-    
-    [Route("api/[controller]")]
+
     [ApiController]
+    [Route("api/[controller]")]
     public class OrdersController : ControllerBase
     {
         private readonly ICreateOrderUseCase _createOrderUseCase;
@@ -48,7 +48,7 @@ namespace OrderService.API.Controllers
             return Ok(orders);
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("{id:guid}", Name = "GetOrderById")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var order = await _getOrderByIdUseCase.ExecuteAsync(id);
@@ -66,7 +66,7 @@ namespace OrderService.API.Controllers
                 return Unauthorized();
           */
             var orderId = await _createOrderUseCase.ExecuteAsync(dto, dto.UserId);
-            return CreatedAtAction(nameof(GetById), new { id = orderId }, null);
+            return Ok(new { id = orderId });
         }
 
         [HttpPatch("{id:guid}/status")]

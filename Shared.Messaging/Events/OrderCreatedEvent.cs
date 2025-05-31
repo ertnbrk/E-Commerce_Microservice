@@ -7,11 +7,13 @@ using RabbitMQ.Client;
 
 namespace Shared.Messaging.Events
 {
-    public class OrderCreatedEvent
+    public class OrderCreatedEvent : IntegrationEvent
     {
         public Guid OrderId { get; set; }
         public Guid ProductId { get; set; }
         public int Quantity { get; set; }
-        public DateTime CreatedAt { get; set; }
+
+        public DateTime CreatedAt   { get; set; } = DateTime.UtcNow;
+
     }
 }

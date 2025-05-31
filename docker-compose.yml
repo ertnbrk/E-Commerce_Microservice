@@ -18,6 +18,8 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
+    networks:
+      - ecommerce-network
   userservice:
     container_name: userservice
     build:

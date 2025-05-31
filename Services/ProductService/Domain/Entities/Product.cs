@@ -13,6 +13,7 @@ namespace ProductService.Domain.Entities
         public int Stock { get; set; }
 
         public ProductCategory Category { get; set; } = ProductCategory.Default;
+        public bool IsActive { get; set; } = true;
 
         public string DisplayInfo => $"{Name} ({Category}) - {UnitPrice:C}";
     }

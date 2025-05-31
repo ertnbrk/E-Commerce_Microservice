@@ -43,7 +43,8 @@ namespace OrderService.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            modelBuilder.Entity<OutboxMessage>()
+        .HasIndex(x => x.IsPublished);
             modelBuilder.Entity<Order>(entity =>
             {
                 entity.ToTable("Orders", "dbo");
