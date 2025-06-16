@@ -7,7 +7,8 @@
         "userservice": "StartDebugging",
         "productservice": "StartDebugging",
         "orderservice": "StartDebugging",
-        "gatewayservice": "StartDebugging"
+        "gatewayservice": "StartDebugging",
+        "paymentservice": "StartDebugging"
       }
     }
   }

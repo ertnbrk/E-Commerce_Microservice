@@ -81,6 +81,9 @@ builder.Services.AddScoped<IEventPublisher, RabbitMqPublisher>();
 builder.Services.AddScoped<IOutboxRepository, OutboxRepository>();
 builder.Services.AddHostedService<OutboxPublisherService>();
 
+builder.Services.AddSingleton<QueueInitializer>();
+
+
 builder.Services.AddValidatorsFromAssemblyContaining<CreateOrderDtoValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
@@ -107,5 +110,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseGlobalExceptionMiddleware();
 app.MapControllers();
+
+
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<QueueInitializer>();
+    initializer.EnsureQueuesExist();
+}
+
 
 app.Run();

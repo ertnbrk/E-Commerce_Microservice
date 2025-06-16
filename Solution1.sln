@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Logging", "Shared.Lo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Messaging", "Shared.Messaging\Shared.Messaging.csproj", "{87D7A3CC-180F-46EB-A637-30A3346F9481}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService", "Services\PaymentService\PaymentService.csproj", "{3B635149-7AE6-4339-85F1-A77840BA4EE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{87D7A3CC-180F-46EB-A637-30A3346F9481}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87D7A3CC-180F-46EB-A637-30A3346F9481}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87D7A3CC-180F-46EB-A637-30A3346F9481}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B635149-7AE6-4339-85F1-A77840BA4EE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B635149-7AE6-4339-85F1-A77840BA4EE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B635149-7AE6-4339-85F1-A77840BA4EE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B635149-7AE6-4339-85F1-A77840BA4EE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,5 +73,6 @@ Global
 		{DBA6B36A-02CB-4E45-AA83-833215145E31} = {1F38C79B-287B-4641-A9FD-7892E421E1BD}
 		{5B056151-22E8-475D-B8D0-48313FB899BE} = {1F38C79B-287B-4641-A9FD-7892E421E1BD}
 		{797AD78B-84D3-4842-88AC-132BB9B06CBD} = {1F38C79B-287B-4641-A9FD-7892E421E1BD}
+		{3B635149-7AE6-4339-85F1-A77840BA4EE1} = {1F38C79B-287B-4641-A9FD-7892E421E1BD}
 	EndGlobalSection
 EndGlobal

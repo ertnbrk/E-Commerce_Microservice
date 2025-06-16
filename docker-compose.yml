@@ -20,6 +20,9 @@ services:
       - RABBITMQ_DEFAULT_PASS=admin
     networks:
       - ecommerce-network
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+  
   userservice:
     container_name: userservice
     build:
@@ -60,6 +63,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - sqlserver
+      - rabbitmq 
     networks:
       - ecommerce-network
 
@@ -76,7 +80,24 @@ services:
       - orderservice
     networks:
       - ecommerce-network
-
+  paymentservice:
+    container_name: paymentservice
+    build:
+      context: .
+      dockerfile: ./Services/PaymentService/Dockerfile
+    ports:
+      - "5004:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    networks:
+      - ecommerce-network
+    
+volumes:
+    rabbitmq_data:
 networks:
   ecommerce-network:
     driver: bridge
+
