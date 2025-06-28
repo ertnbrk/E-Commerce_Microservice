@@ -28,7 +28,7 @@ namespace OrderService.Application.UseCases
 
         }
 
-        public async Task<Order> ExecuteAsync(OrderCreateDto dto, Guid userId)
+        public async Task<Order> ExecuteAsync(OrderCreateDto dto, Guid userId,Guid productId)
         {
             //Validate user (Optional)
             var userExists = await _userService.UserExistsAsync(userId);
@@ -36,9 +36,8 @@ namespace OrderService.Application.UseCases
                 throw new Exception("Kullanıcı bulunamadı.");
 
             //Get Product Information
-            Guid productIdDummy = Guid.Parse("3136e93d-1407-4f4c-965b-f8b23e92661d");
-            var product = await _productService.GetProductByIdAsync(productIdDummy);
-            
+            var product = await _productService.GetProductByIdAsync(productId);
+            Console.WriteLine("Product : " + JsonSerializer.Serialize(product));
             if (product == null || !product.IsActive) {
                 Console.WriteLine(JsonSerializer.Serialize(product));
                 throw new Exception("Ürün bulunamadı veya aktif değil. /n ProductId : "+dto.ProductId + "/n Product : /n" + JsonSerializer.Serialize(product));

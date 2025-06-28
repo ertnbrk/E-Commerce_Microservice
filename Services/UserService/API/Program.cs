@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using UserService.Infrastructure.Persistence;
 using UserService.Infrastructure.Services;
 using UserService.Application.Interfaces;
@@ -18,27 +18,28 @@ using Shared.Messaging.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Kestrel port
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.ListenAnyIP(80); // veya 5000 gibi
+    serverOptions.ListenAnyIP(80);
 });
+
+// MVC / Swagger
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//dependecy injection for db
+
+// HTTP Client
 builder.Services.AddHttpClient();
 
-
+// Serilog
 SerilogConfigurator.Configure("userservice");
 builder.Host.UseSerilog();
 
-
-
-//Services
+// Messaging
 builder.Services.AddScoped<IEventPublisher, RabbitMqPublisher>();
 
+// JWT Auth
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -58,10 +59,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization();
 
-// Repositories
+// Repositories & UseCases
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-// UseCases
 builder.Services.AddScoped<IRegisterUserUseCase, RegisterUserUseCase>();
 builder.Services.AddScoped<ILoginUserUseCase, LoginUserUseCase>();
 builder.Services.AddScoped<IGetAllUsersUseCase, GetAllUsersUseCase>();
@@ -70,28 +69,24 @@ builder.Services.AddScoped<IUpdateUserUseCase, UpdateUserUseCase>();
 builder.Services.AddScoped<IDeleteUserUseCase, DeleteUserUseCase>();
 builder.Services.AddScoped<IUpdateUserStatusUseCase, UpdateUserStatusUseCase>();
 
-
+// FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserDtoValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
-
-
-
-
-
-
-
-
-
-
-
+// DbContext with retry
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
 builder.Services.AddDbContext<UserDbContext>(options =>
     options.UseSqlServer(connectionString, opt => opt.EnableRetryOnFailure()));
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// **Migration’ları otomatik uygula**
+using (var scope = app.Services.CreateScope())
+{
+   
+}
+
+// Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

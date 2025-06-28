@@ -1,4 +1,4 @@
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using ProductService.Application.Interfaces;
@@ -21,12 +21,12 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 });
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// DbContext
 builder.Services.AddDbContext<ProductDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 
 // Repository
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -38,20 +38,24 @@ builder.Services.AddScoped<IGetProductByIdUseCase, GetProductByIdUseCase>();
 builder.Services.AddScoped<IUpdateProductStatusUseCase, UpdateProductStatusUseCase>();
 builder.Services.AddScoped<IDeleteProductUseCase, DeleteProductUseCase>();
 
+// Messaging
 builder.Services.AddScoped<IEventPublisher, RabbitMqPublisher>();
 
-
-
+// FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<ProductDtoValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
-
-
+// Serilog
 SerilogConfigurator.Configure("productservice");
 builder.Host.UseSerilog();
 
-
 var app = builder.Build();
+
+// **Migration’ları otomatik uygula**
+using (var scope = app.Services.CreateScope())
+{
+   
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

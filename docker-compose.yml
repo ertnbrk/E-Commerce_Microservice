@@ -1,77 +1,104 @@
+﻿version: "3.8"
+
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver
     environment:
-      SA_PASSWORD: '1471027Demo'
       ACCEPT_EULA: "Y"
+      SA_PASSWORD: "1471027Demo"
     ports:
       - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
     networks:
       - ecommerce-network
+    healthcheck:
+      test: ["CMD", "sqlcmd", "-S", "localhost", "-U", "sa", "-P", "1471027Demo", "-Q", "SELECT 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
-      - "5672:5672"     # AMQP
-      - "15672:15672"   # RabbitMQ Management UI
+      - "5672:5672"
+      - "15672:15672"
     environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=admin
-    networks:
-      - ecommerce-network
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-  
+    networks:
+      - ecommerce-network
+
   userservice:
-    container_name: userservice
     build:
-      context: .                             
+      context: .
       dockerfile: ./Services/UserService/Dockerfile
+    container_name: userservice
     ports:
       - "5001:80"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: >-
+        Server=sqlserver,1433;
+        Database=ecom_users;
+        User Id=sa;
+        Password=1471027Demo;
+        TrustServerCertificate=True;
     depends_on:
       - sqlserver
     networks:
       - ecommerce-network
 
-
   productservice:
-    container_name: productservice
     build:
-      context: .                                
+      context: .
       dockerfile: ./Services/ProductService/Dockerfile
+    container_name: productservice
     ports:
       - "5002:80"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: >-
+        Server=sqlserver,1433;
+        Database=ecom_users;
+        User Id=sa;
+        Password=1471027Demo;
+        TrustServerCertificate=True;
     depends_on:
       - sqlserver
     networks:
       - ecommerce-network
 
   orderservice:
-    container_name: orderservice
     build:
       context: .
-      dockerfile: /Services/OrderService/Dockerfile
+      dockerfile: ./Services/OrderService/Dockerfile
+    container_name: orderservice
     ports:
       - "5003:80"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: >-
+        Server=sqlserver,1433;
+        Database=ecom_users;
+        User Id=sa;
+        Password=1471027Demo;
+        TrustServerCertificate=True;
     depends_on:
       - sqlserver
-      - rabbitmq 
+      - rabbitmq
     networks:
       - ecommerce-network
 
   gatewayservice:
-    container_name: gatewayservice
     build:
       context: .
       dockerfile: GatewayService/Dockerfile
+    container_name: gatewayservice
     ports:
       - "5000:80"
     depends_on:
@@ -80,24 +107,32 @@ services:
       - orderservice
     networks:
       - ecommerce-network
+
   paymentservice:
-    container_name: paymentservice
     build:
       context: .
       dockerfile: ./Services/PaymentService/Dockerfile
+    container_name: paymentservice
     ports:
       - "5004:80"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: >-
+        Server=sqlserver,1433;
+        Database=ecom_users;
+        User Id=sa;
+        Password=1471027Demo;
+        TrustServerCertificate=True;
     depends_on:
       - sqlserver
       - rabbitmq
     networks:
       - ecommerce-network
-    
+
 volumes:
-    rabbitmq_data:
+  rabbitmq_data:
+  sqlserver_data:
+
 networks:
   ecommerce-network:
     driver: bridge
-

@@ -65,7 +65,7 @@ namespace OrderService.API.Controllers
             if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
                 return Unauthorized();
           */
-            var orderId = await _createOrderUseCase.ExecuteAsync(dto, dto.UserId);
+            var orderId = await _createOrderUseCase.ExecuteAsync(dto, dto.UserId,dto.ProductId);
             return Ok(new { id = orderId });
         }
 

@@ -118,6 +118,8 @@ using (var scope = app.Services.CreateScope())
 {
     var initializer = scope.ServiceProvider.GetRequiredService<QueueInitializer>();
     initializer.EnsureQueuesExist();
+    var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+    db.Database.Migrate();
 }
 
 

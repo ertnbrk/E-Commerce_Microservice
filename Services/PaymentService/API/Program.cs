@@ -71,13 +71,11 @@ builder.Services.AddHostedService<OutboxPublisherService>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreatePaymentDtoValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
-// Middleware
-//builder.Services.AddTransient<ExceptionMiddleware>();
 
 var app = builder.Build();
 
 // Pipeline
-//app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -96,6 +94,8 @@ using (var scope = app.Services.CreateScope())
     {
         var queueInitializer = scope.ServiceProvider.GetRequiredService<QueueInitializer>();
         queueInitializer.EnsureQueuesExist();
+        var db = scope.ServiceProvider.GetRequiredService<PaymentDbContext>();
+        db.Database.Migrate();
     }
     catch (Exception ex)
     {

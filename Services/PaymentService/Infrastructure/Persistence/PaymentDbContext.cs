@@ -84,11 +84,8 @@ namespace PaymentService.Infrastructure.Persistence
                 entity.Property(e => e.CreatedAt)
                       .HasColumnName("CreatedAt");
 
-                entity.Property(e => e.ModifiedAt)
-                      .HasColumnName("ModifiedAt");
+                
 
-                entity.Property(e => e.IsActive)
-                      .HasColumnName("IsActive");
             });
         }
     }
