@@ -8,7 +8,8 @@
         "productservice": "StartDebugging",
         "orderservice": "StartDebugging",
         "gatewayservice": "StartDebugging",
-        "paymentservice": "StartDebugging"
+        "paymentservice": "StartDebugging",
+        "shippingservice": "StartDebugging"
       }
     }
   }

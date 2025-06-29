@@ -7,5 +7,7 @@
         public string Content { get; set; } = null!; // JSON serialized body
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? ProcessedAt { get; set; } // null ise henüz gönderilmedi
+        public bool IsProcessed { get; set; } = false;
+
     }
 }

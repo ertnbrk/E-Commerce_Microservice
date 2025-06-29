@@ -129,6 +129,27 @@ services:
     networks:
       - ecommerce-network
 
+  shippingservice:
+    build:
+      context: .
+      dockerfile: ./Services/ShippingService/Dockerfile
+    container_name: shippingservice
+    ports:
+      - "5005:80"  # test amaçlı
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: >-
+        Server=sqlserver,1433;
+        Database=ecom_users;
+        User Id=sa;
+        Password=1471027Demo;
+        TrustServerCertificate=True;
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    networks:
+      - ecommerce-network
+
 volumes:
   rabbitmq_data:
   sqlserver_data:
@@ -136,3 +157,4 @@ volumes:
 networks:
   ecommerce-network:
     driver: bridge
+
